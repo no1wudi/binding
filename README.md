@@ -82,6 +82,12 @@ idx = duk_get_top_index(ctx);
 duk_push_string(ctx, "log");
 duk_push_c_function(ctx, js_log, 1);
 duk_def_prop(ctx, idx, DUK_DEFPROP_HAVE_VALUE);
+duk_push_string(ctx, "sum");
+duk_push_c_function(ctx, js_sum, 3);
+duk_def_prop(ctx, idx, DUK_DEFPROP_HAVE_VALUE);
+duk_push_string(ctx, "INFO");
+duk_push_string(ctx, "Information");
+duk_def_prop(ctx, idx, DUK_DEFPROP_HAVE_VALUE);
 duk_put_global_string(ctx, "console");
 ```
 
