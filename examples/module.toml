@@ -1,0 +1,15 @@
+[include]
+system = ['stdio.h','alloca.h','string.h']
+
+[global.function]
+print="void printf(const char *)"
+
+[global.const]
+MAXJOBS=16
+
+[console.function]
+log='void printf(const char *)'
+sum="int sum(int,int,int)"
+
+[console.const]
+INFO='Information'

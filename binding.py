@@ -88,8 +88,31 @@ class Duktape(Backend):
                     else:
                         raise RuntimeError(
                             'Constant type not supported:{}'.format(tn))
-
+                    code += '  duk_def_prop(ctx, idx, DUK_DEFPROP_HAVE_VALUE);\n'
             code += '  duk_put_global_string(ctx, \"{}\");\n'.format(name)
+        return code
+
+    def gen_global_module(self, module: dict):
+        code = ''
+        if 'function' in module or 'const' in module:
+            if 'function' in module:
+                for n, v in module['function'].items():
+                    sign = extract_signature('dummy', n, v)
+                    code += '  duk_push_c_function(ctx, js_{}, {});\n'.format(
+                        n, len(sign['params']))
+                    code += '  duk_put_global_string(ctx, \"{}\");\n\n'.format(n)
+        if 'const' in module:
+            for n, v in module['const'].items():
+                tn = type(v).__name__
+                if tn == 'int':
+                    code += '  duk_push_int(ctx, {});\n'.format(v)
+                elif tn == 'str':
+                    code += '  duk_push_string(ctx, \"{}\");\n'.format(v)
+                else:
+                    raise RuntimeError(
+                        'Constant type not supported:{}'.format(tn))
+
+                code += '  duk_put_global_string(ctx, \"{}\");\n\n'.format(n)
         return code
 
     def gen_entry(self, module: dict):
@@ -98,7 +121,10 @@ class Duktape(Backend):
 
         for n, v in module.items():
             if n != 'include':
-                code += self.gen_module(n, v)
+                if n == 'global':
+                    code += self.gen_global_module(v)
+                else:
+                    code += self.gen_module(n, v)
 
         code += '}'
         return code
@@ -184,7 +210,8 @@ class Context(object):
 /****************************************************************************
  * {file}
  * 
- * Generated from {origin} by binding.py @ {date}
+ * Generated from {origin}
+ * By binding.py @ {date}
  *
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
