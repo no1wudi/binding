@@ -30,6 +30,7 @@ Generated：
 
 ```
 [global.function]
+# This 'void' means ignore the return value in generated code
 print="void printf(const char *)"
 ```
 
