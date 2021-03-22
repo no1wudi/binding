@@ -1,26 +1,23 @@
 # Language Binding Generator
 
-查看用法可以用以下命令：
+For help：
 ```
 python binding.py -h
 ```
 
-目前支持生成Duktape的绑定，计划支持QuickJS、JerryScript、WASM3、WAMR、Lua。
+Now only Duktape supported.
 
-## 语法
-
-脚本支持全局函数、模块、常量定义的生成。
+## Syntax
 
 ### include
 
-指定包含文件：
 ```
 [include]
 system = ["stdio.h", "stdbool.h"]
 custom = ["string.h", "demo.h"]
 ```
 
-生成代码：
+Generated：
 ```
 #include <stdio.h>
 #include <stdbool.h>
@@ -29,43 +26,45 @@ custom = ["string.h", "demo.h"]
 #include "demo.h"
 ```
 
-### 全局函数
+### Gloabal function
 
 ```
 [global.function]
 print="void printf(const char *)"
 ```
 
-生成代码：
+Generated：
 ```
 duk_push_c_function(ctx, js_print, 1);
 duk_put_global_string(ctx, "print");
 ```
 
-JavaScript:
+Usage in JavaScript:
 ```
 print('Hello -- from Bindgen!\n')
 ```
 
-### 全局常量
+### Global constant
 
 ```
 [global.const]
 MAXJOBS=16
 ```
 
-生成代码：
+Generated：
 ```
 duk_push_int(ctx, 16);
 duk_put_global_string(ctx, "MAXJOBS");
 ```
 
-JavaScript:
+Usage in JavaScript:
 ```
 print(MAXJOBS)
 ```
 
-### 模块
+### Module organization
+
+JavaScript/Wasm has the concept of module, 
 
 ```
 [console.function]
@@ -75,7 +74,7 @@ log='void printf(const char *)'
 INFO='Information'
 ```
 
-生成代码：
+Generated：
 ```
 duk_push_object(ctx);
 idx = duk_get_top_index(ctx);
